@@ -15,7 +15,7 @@ export default function PublicNav() {
   ];
   return (
     <>
-      <nav className="bg-white border-gray-200 dark:bg-gray-900">
+      <nav className="bg-white border-gray-200 drop-shadow-xs">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
           {/* لوگو */}
           <a
@@ -35,6 +35,7 @@ export default function PublicNav() {
             <LoginButton />
           </div>
         </div>
+        <hr className=" h-0.5 border-t-0 bg-neutral-100" />
         {/*منو */}
         <button
           onClick={() => setIsOpen(!isOpen)}
