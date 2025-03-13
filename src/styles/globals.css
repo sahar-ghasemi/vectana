@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-themeLightPurple: #f4f0fe;
-  --color-themeDefaultPurple: #8b3dff;
-  --color-themeDarkPurple: #7731d8;
-  --color-themeBackgroundPurple: #f4f0fd;
+  --color-theme-purple-light: #f4f0fe;
+  --color-theme-purple-default: #8b3dff;
+  --color-theme-purple-dark: #7731d8;
+  --color-theme-background-purple: #f4f0fd;
+  --color-theme-background-default: #f0f1f5;
 }
 body {
   font-family: Arial, Helvetica, sans-serif;
