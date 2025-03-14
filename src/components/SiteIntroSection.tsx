@@ -1,14 +1,27 @@
 "use client";
-import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 
-export default function LearningSection() {
+export default function SiteIntroSection() {
   return (
-    <div className="flex justify-center items-center bg-gradient-to-l from-theme-background-light to-purple-300 grid grid-cols-1 md:grid-cols-2 p-10 w-full h-[100vh]">
+    <div className="flex justify-center items-center grid grid-cols-1 md:grid-cols-2 p-10 w-full min-h-screen">
+      {/* سمت راست: تصویر */}
+      <div className="relative w-full h-[60vh] md:h-full">
+        {" "}
+        {/* تنظیم ارتفاع برای موبایل */}
+        <Image
+          src="/images/8.webp"
+          alt=""
+          layout="fill"
+          objectFit="cover"
+          style={{ borderRadius: "20px" }}
+        />
+      </div>
+
       {/* سمت چپ: متن */}
-      <div className="flex justify-center items-center md:w-2/3 mx-auto p-6 bg-white border border-gray-200 rounded-4xl shadow-md md:h-auto flex-col mb-10 md:mb-0">
+      <div className="flex justify-center items-center w-full md:w-1/2 p-6 flex-col m-auto">
         <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 text-center">
-          میخوای چیزی دانلود کنی ؟
+          میخوای چیزی دانلود کنی؟
         </h5>
         <p className="mb-6 font-bold text-gray-700 text-center">
           ما توی وکتانا تنها هدفمون راحتی شماست پس خیالت راحت باشه که تمام
@@ -37,25 +50,6 @@ export default function LearningSection() {
           </svg>
         </Link>
       </div>
-
-      {/* سمت راست: ویدئو */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
-          duration: 0.6,
-          scale: { type: "spring", bounce: 0.5 },
-        }}
-        className="flex justify-center items-center p-5"
-      >
-        <div className="w-full max-w-full">
-          <video
-            src="./videos/test.mp4"
-            controls
-            className="w-full h-auto object-cover"
-          />
-        </div>
-      </motion.div>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import BackgroundShapes from "./BackgroundShapes";
 
 export default function HighlightTextSection() {
   return (
-    <div className="flex justify-center items-center p-10 w-full bg-theme-background-purple ">
+    <div className="flex justify-center items-center p-10 w-full bg-linear-to-b from-theme-background-purple to-#F3F4F6">
       <BackgroundShapes />
       <div className="text-center">
         <h1 className="text-5xl font-extrabold mb-4 mt-6">
