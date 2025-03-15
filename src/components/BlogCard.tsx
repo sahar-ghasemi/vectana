@@ -27,8 +27,9 @@ export default function BlogCard({
         src={image}
         alt={title}
         className="h-40 w-full object-cover"
-        width="100"
-        height="100"
+        width="400"
+        height="400"
+        quality={100}
       />
 
       <div className="p-4 flex flex-col justify-between h-full">
