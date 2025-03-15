@@ -51,7 +51,7 @@ export default function Contact() {
             </ul>
           </div>
         </div>
-        <div className=" bg-theme-purple-light rounded-2xl p-3">
+        <div className=" bg-theme-purple-light rounded-3xl p-3">
           <div className="p-4 mx-auto max-w-xl">
             <form className=" space-y-3">
               <div>
