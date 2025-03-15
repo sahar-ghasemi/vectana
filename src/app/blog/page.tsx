@@ -1,5 +1,6 @@
 import { BlogCard } from "@/components";
 import PublicLayout from "../public-layout";
+import Link from "next/link";
 interface Blog {
   id: number;
   image: string;
@@ -72,15 +73,16 @@ export default function Blogs() {
       <div className="p-4 flex justify-center ">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-clos-5 gap-5 ">
           {blogData.map((blog) => (
-            <BlogCard
-              key={blog.id}
-              image={blog.image}
-              title={blog.title}
-              text={blog.text}
-              date={blog.date}
-              author={blog.author}
-              avatar={blog.avatar}
-            />
+            <Link href={`/blog/${blog.id}`} key={blog.id}>
+              <BlogCard
+                image={blog.image}
+                title={blog.title}
+                text={blog.text}
+                date={blog.date}
+                author={blog.author}
+                avatar={blog.avatar}
+              />
+            </Link>
           ))}
         </div>
       </div>
