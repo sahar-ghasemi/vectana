@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function LearningSection() {
   return (
-    <div className="flex justify-center items-center bg-gradient-to-l from-theme-background-light to-purple-300 grid grid-cols-1 md:grid-cols-2 p-10 w-full h-[100vh]">
+    <div className=" justify-center items-center bg-gradient-to-l from-theme-background-light to-purple-300 grid grid-cols-1 md:grid-cols-2 p-10 w-full h-[100vh]">
       {/* سمت چپ: متن */}
       <div className="flex justify-center items-center md:w-2/3 mx-auto p-6 bg-white border border-gray-200 rounded-4xl shadow-md md:h-auto flex-col mb-10 md:mb-0">
         <h5 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 text-center">
