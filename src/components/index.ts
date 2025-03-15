@@ -7,3 +7,4 @@ export { default as LearningSection } from "./LearningSection";
 export { default as HighlightTextSection } from "./highlightText/HighlightTextSection";
 export { default as CurvedSection } from "./CurvedSection";
 export { default as SiteIntroSection } from "./SiteIntroSection";
+export { default as BlogCard } from "./BlogCard";
