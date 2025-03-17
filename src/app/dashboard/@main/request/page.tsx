@@ -1,3 +1,9 @@
+import FileLinkForm from "./FileLinkForm";
+
 export default function Request() {
-  return <div>صفحه ارسال درخواست</div>;
+  return (
+    <div className="mx-10">
+      <FileLinkForm />
+    </div>
+  );
 }

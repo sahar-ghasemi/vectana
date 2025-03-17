@@ -1,3 +1,9 @@
+import RequestList from "./RequestList";
+
 export default function Reports() {
-  return <div>صفحه گزارشات و دانلود</div>;
+  return (
+    <div className="mx-10">
+      <RequestList />
+    </div>
+  );
 }
