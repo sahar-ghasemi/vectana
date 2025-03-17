@@ -17,7 +17,7 @@ export default function LearningSection() {
 
         <Link
           href="#"
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gradient-to-br rounded-lg from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 hover:bg-blue-800"
+          className="inline-flex items-center  text-center text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 hover:bg-blue-800"
         >
           بزن بریم
           <svg

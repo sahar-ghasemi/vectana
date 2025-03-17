@@ -1,14 +1,36 @@
 @import "tailwindcss";
-
+@font-face {
+  font-family: "IranYekan";
+  src: url("/fonts/IranYekan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Yekan";
+  src: url("/fonts/Yekan.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 @theme {
   --color-theme-purple-light: #f4f0fe;
   --color-theme-purple-default: #8b3dff;
   --color-theme-purple-dark: #7731d8;
   --color-theme-background-purple: #f4f0fd;
   --color-theme-background-default: #f0f1f5;
+  --font-primary: "IranYekan", Arial, Helvetica, sans-serif; /* این خط جدید */
+  --font-secondary: "Yekan", Arial, Helvetica, sans-serif; /* فونت دوم */
 }
+.font-iranyekan {
+  font-family: var(--font-primary);
+}
+.font-yekan {
+  font-family: var(--font-secondary);
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-primary);
   padding: 0;
   margin: 0;
 }
