@@ -6,9 +6,9 @@ export default function DashboardLayout({
   sidebar: React.ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-4">{sidebar}</div>
-      <div className="col-span-8">{main}</div>
+    <div className="grid grid-cols-12 gap-2">
+      <div className="col-span-3">{sidebar}</div>
+      <div className="col-span-9">{main}</div>
     </div>
   );
 }
