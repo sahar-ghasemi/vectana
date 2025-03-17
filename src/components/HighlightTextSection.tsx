@@ -1,4 +1,4 @@
-import BackgroundShapes from "./BackgroundShapes";
+import BackgroundShapes from "../utils/BackgroundShapes";
 
 export default function HighlightTextSection() {
   return (

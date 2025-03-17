@@ -1,5 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PublicLayout from "../public-layout";
+
 import {
   faInstagram,
   faWhatsapp,
@@ -8,7 +9,7 @@ import {
 export default function Contact() {
   return (
     <PublicLayout>
-      <div className="p-10 w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="p-10 w-full grid grid-cols-1 md:grid-cols-2 gap-20">
         <div className="flex flex-col justify-start items-center">
           <div className=" bg-gradient-to-br from-purple-600 via-fuchsia-400 to-blue-500 rounded-b-full p-2 w-3/4"></div>
           <p className="font-bold text-4xl mt-3">ارتباط با ما</p>
@@ -17,10 +18,10 @@ export default function Contact() {
             اگر نیاز به ارتباط با ما دارید از روش‌های زیر می‌توانید با ما در
             ارتباط باشید
           </p>
-          <p className="text-lg justify-center mb-3">
+          <p className="text-lg justify-center mb-7">
             ما از شنیدن صدای شما خوشحال خواهیم شد
           </p>
-          <p>info@vectana.ir</p>
+          <p className="mb-2">info@vectana.ir</p>
           <p>0218745657</p>
           <div>
             <ul className="flex items-center space-x-3 mt-9 ">

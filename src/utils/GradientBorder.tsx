@@ -1,4 +1,4 @@
-export default function GradiantBorder({
+export default function GradientBorder({
   children,
 }: {
   children: React.ReactNode;

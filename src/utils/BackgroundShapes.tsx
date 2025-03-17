@@ -62,6 +62,20 @@ export default function BackgroundShapes() {
         }}
         style={{ top: "50%", left: "97%" }}
       />
+      <motion.div
+        className="absolute w-23 h-23 bg-fuchsia-500 rounded-full opacity-10"
+        animate={{
+          x: ["0%", "8%", "0%"], // حرکت کمی به چپ و راست
+          y: ["0%", "7%", "0%"], // حرکت کمی به بالا و پایین
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: "loop",
+          ease: "easeInOut",
+        }}
+        style={{ top: "60%", left: "75%" }}
+      />
     </div>
   );
 }
