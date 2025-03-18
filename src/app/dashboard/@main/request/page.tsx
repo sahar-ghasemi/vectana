@@ -2,7 +2,7 @@ import FileLinkForm from "./FileLinkForm";
 
 export default function Request() {
   return (
-    <div className="mx-10">
+    <div className="ml-20">
       <FileLinkForm />
     </div>
   );

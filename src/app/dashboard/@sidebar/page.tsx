@@ -24,6 +24,7 @@ export default function Sidebar() {
       href: "/dashboard/subscriptions",
       icon: faShoppingCart,
     },
+    { label: "ثبت واریز", href: "/dashboard/payinfo", icon: faSignOutAlt },
     { label: "خروج", href: "/", icon: faSignOutAlt },
   ];
 
