@@ -10,6 +10,7 @@ import {
   faDownload,
   faShoppingCart,
   faSignOutAlt,
+  faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
 
 export default function Sidebar() {
@@ -24,7 +25,7 @@ export default function Sidebar() {
       href: "/dashboard/subscriptions",
       icon: faShoppingCart,
     },
-    { label: "ثبت واریز", href: "/dashboard/payinfo", icon: faSignOutAlt },
+    { label: "ثبت واریز", href: "/dashboard/payinfo", icon: faCreditCard },
     { label: "خروج", href: "/", icon: faSignOutAlt },
   ];
 
