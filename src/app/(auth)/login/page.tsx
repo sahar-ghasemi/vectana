@@ -7,74 +7,95 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Email:", email);
     console.log("Password:", password);
     router.push("/dashboard");
   };
+
   return (
-    <>
-      <form className="max-w-sm mx-auto" onSubmit={handleSubmit}>
-        <div className="mb-5">
-          <label
-            htmlFor="email"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            ایمیل:
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
-            placeholder="name@flowbite.com"
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div className="mb-5">
-          <label
-            htmlFor="password"
-            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-          >
-            پسورد{" "}
-          </label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div className="flex items-start mb-5">
-          <div className="flex items-center h-5">
+    <div
+      className="flex justify-center items-center min-h-screen bg-gradient-to-br
+     from-blue-100 to-purple-200"
+    >
+      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
+          ورود به حساب کاربری
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email Field */}
+          <div>
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              ایمیل:
+            </label>
             <input
-              id="remember"
-              type="checkbox"
-              value=""
-              className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
+              type="email"
+              id="email"
+              value={email}
+              className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="name@example.com"
               required
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <label
-            htmlFor="remember"
-            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-          >
-            بخاطر سپردن من{" "}
-          </label>
-        </div>
-        <button
-          type="submit"
-          className="text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-        >
-          ورود
-        </button>
-      </form>
 
-      <Link href="/signup">ثبت نام</Link>
-    </>
+          {/* Password Field */}
+          <div>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              رمز عبور:
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="••••••••"
+              required
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+
+          {/* Remember Me & Forgot Password */}
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" className="w-4 h-4 text-purple-600" />
+              <span className="text-gray-600">مرا به خاطر بسپار</span>
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-purple-600 hover:underline"
+            >
+              رمز عبور را فراموش کرده‌اید؟
+            </Link>
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-br from-purple-500 to-blue-500 hover:from-blue-500
+             hover:to-purple-500 text-white font-bold py-3 rounded-lg transition-all duration-300 
+             shadow-md hover:shadow-lg hover:cursor-pointer"
+          >
+            ورود
+          </button>
+        </form>
+
+        {/* Signup Link */}
+        <p className="text-center text-gray-600 mt-4">
+          حساب کاربری ندارید؟{" "}
+          <Link href="/signup" className="text-purple-600 hover:underline">
+            ثبت‌نام کنید
+          </Link>
+        </p>
+      </div>
+    </div>
   );
 }
