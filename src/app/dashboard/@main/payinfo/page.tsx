@@ -6,6 +6,7 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import "react-multi-date-picker/styles/colors/purple.css";
 import PayInfoList from "./PayInfoList";
+import { TipCard } from "@/utils";
 
 interface FormValues {
   date: DateObject | null;
@@ -29,14 +30,10 @@ export default function Example() {
   return (
     <div className="ml-20">
       <div className="grid grid-cols-1 gap-y-5 ">
-        <div className="bg-theme-background-purple p-3 rounded-lg mt-10">
-          <p className="font-semibold">نحوه خرید پنل انتخاب شده:</p>
-          <p>
-            مبلغ پنل انتخابی را به شماره کارت زیر واریز و در همین صفحه اطلاعات
-            ان را ثبت بفرمائید
-          </p>
-          <p> 5859-3465-8374-4875</p>
-        </div>
+        <TipCard
+          title="ثبت درخواست بررسی واریزی"
+          description="اطلاعات پرداخت خود را برای بررسی در این فرم ثبت بفرمائید"
+        />
 
         <form
           onSubmit={handleSubmit(onSubmit)}
