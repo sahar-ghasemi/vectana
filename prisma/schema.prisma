@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -21,14 +22,14 @@ enum UserRole {
 model User {
   id                  String    @id @default(cuid())
   firstName           String
-  lastName            String
+  lastName            String?
   mobile              String
   email               String
   referralCode        String
   referredByUser      String?
   remainingFreeRequest Int      @default(0)
   signupDate          DateTime  @default(now())
-  lastLogin           DateTime?
+  lastLogin           DateTime
   loginCount          Int       @default(0)
   marketingTag        String?
   role                UserRole  @default(USER)
@@ -50,7 +51,7 @@ model Site {
   name        String
   baseURL     String
   description String?
-  status      Int?
+  status      Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -102,6 +103,7 @@ model ApiCall {
   responseStatus      Int
   responseTimeMs      Int
   createdAt           DateTime  @default(now())
+  filePath String?
 
   // Relations
   user          User            @relation(fields: [userId], references: [id])
