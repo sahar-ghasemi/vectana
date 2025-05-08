@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+model User {
+  id                  String    @id @default(cuid())
+  firstName           String
+  lastName            String
+  mobile              String
+  email               String
+  referralCode        String
+  referredByUser      String?
+  remainingFreeRequest Int      @default(0)
+  signupDate          DateTime  @default(now())
+  lastLogin           DateTime?
+  loginCount          Int       @default(0)
+  marketingTag        String?
+  role                UserRole  @default(USER)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  referredBy          User?     @relation("UserReferrals", fields: [referredByUser], references: [id])
+  referrals           User[]    @relation("UserReferrals")
+  sites               Site[]
+  userSubscriptions   UserSubscription[]
+  apiCalls            ApiCall[]
+  referralTracking    ReferralTracking[] @relation("Referrer")
+  referredTracking    ReferralTracking[] @relation("Referred")
+}
+
+model Site {
+  id          String    @id @default(cuid())
+  name        String
+  baseURL     String
+  description String?
+  status      Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  apiCalls    ApiCall[]
+  subscriptionSites SubscriptionSite[]
+}
+
+model Subscription {
+  id            String    @id @default(cuid())
+  name          String
+  requestLimit  Int
+  price         Float
+  durationDays  Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  userSubscriptions UserSubscription[]
+  subscriptionSites SubscriptionSite[]
+}
+
+model UserSubscription {
+  id                  String    @id @default(cuid())
+  userId              String
+  subscriptionId      String
+  startDate           DateTime  @default(now())
+  endDate             DateTime
+  isActive            Boolean   @default(true)
+  requestLimitAtPurchase Int    @default(0)
+  remainingRequest    Int
+  updatedAt           DateTime  @updatedAt
+
+  // Relations
+  user          User        @relation(fields: [userId], references: [id])
+  subscription  Subscription @relation(fields: [subscriptionId], references: [id])
+  apiCalls      ApiCall[]
+}
+
+model ApiCall {
+  id                  String    @id @default(cuid())
+  userId              String
+  userSubscriptionId  String
+  siteId              String
+  endpoint            String
+  timestamp           DateTime  @default(now())
+  responseStatus      Int
+  responseTimeMs      Int
+  createdAt           DateTime  @default(now())
+
+  // Relations
+  user          User            @relation(fields: [userId], references: [id])
+  userSubscription UserSubscription @relation(fields: [userSubscriptionId], references: [id])
+  site          Site            @relation(fields: [siteId], references: [id])
+}
+
+model SubscriptionSite {
+  id              String    @id @default(cuid())
+  subscriptionId  String
+  siteId          String
+  createdAt       DateTime  @default(now())
+
+  // Relations
+  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
+  site            Site        @relation(fields: [siteId], references: [id])
+}
+
+model ReferralTracking {
+  id          String    @id @default(cuid())
+  referrerId  String
+  referredId  String
+  rewardCount Int
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  referrer    User      @relation("Referrer", fields: [referrerId], references: [id])
+  referred    User      @relation("Referred", fields: [referredId], references: [id])
+}
+
+
