@@ -21,10 +21,10 @@ enum UserRole {
 
 model User {
   id                  String    @id @default(cuid())
-  firstName           String
+  firstName           String?
   lastName            String?
-  mobile              String
-  email               String
+  mobile              String    @unique
+  email               String    
   referralCode        String
   referredByUser      String?
   remainingFreeRequest Int      @default(0)
