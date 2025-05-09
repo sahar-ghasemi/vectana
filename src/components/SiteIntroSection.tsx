@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function SiteIntroSection() {
   return (
-    <div className="flex justify-center items-center grid grid-cols-1 md:grid-cols-2 p-10 w-full min-h-screen">
+    <div className="grid grid-cols-1 md:grid-cols-2 p-10 w-full min-h-screen">
       {/* سمت راست: تصویر */}
       <div className="relative w-full h-[60vh] md:h-full">
         {" "}
@@ -30,7 +30,9 @@ export default function SiteIntroSection() {
 
         <Link
           href="#"
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-gradient-to-br rounded-lg from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 hover:bg-blue-800"
+          className="inline-flex items-center text-white bg-gradient-to-br 
+           from-purple-600 to-blue-500 hover:bg-gradient-to-bl font-medium 
+           rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 hover:bg-blue-800"
         >
           بزن بریم
           <svg
