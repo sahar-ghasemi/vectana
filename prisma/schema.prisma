@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -14,124 +13,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum UserRole {
-  USER
-  ADMIN
-}
-
 model User {
-  id                  String    @id @default(cuid())
-  firstName           String?
-  lastName            String?
-  mobile              String    @unique
-  email               String    
-  referralCode        String
-  referredByUser      String?
-  remainingFreeRequest Int      @default(0)
-  signupDate          DateTime  @default(now())
-  lastLogin           DateTime
-  loginCount          Int       @default(0)
-  marketingTag        String?
-  role                UserRole  @default(USER)
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-
-  // Relations
-  referredBy          User?     @relation("UserReferrals", fields: [referredByUser], references: [id])
-  referrals           User[]    @relation("UserReferrals")
-  sites               Site[]
-  userSubscriptions   UserSubscription[]
-  apiCalls            ApiCall[]
-  referralTracking    ReferralTracking[] @relation("Referrer")
-  referredTracking    ReferralTracking[] @relation("Referred")
+  id                   String             @id @default(cuid())
+  firstName            String?
+  lastName             String?
+  mobile               String             @unique
+  email                String
+  referralCode         String
+  referredByUser       String?
+  remainingFreeRequest Int                @default(0)
+  signupDate           DateTime           @default(now())
+  lastLogin            DateTime
+  loginCount           Int                @default(0)
+  marketingTag         String?
+  role                 UserRole           @default(USER)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  apiCalls             ApiCall[]
+  referredTracking     ReferralTracking[] @relation("Referred")
+  referralTracking     ReferralTracking[] @relation("Referrer")
+  sites                Site[]
+  referredBy           User?              @relation("UserReferrals", fields: [referredByUser], references: [id])
+  referrals            User[]             @relation("UserReferrals")
+  userSubscriptions    UserSubscription[]
 }
 
 model Site {
-  id          String    @id @default(cuid())
-  name        String
-  baseURL     String
-  description String?
-  status      Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // Relations
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  apiCalls    ApiCall[]
+  id                String             @id @default(cuid())
+  name              String
+  baseURL           String
+  description       String?
+  status            Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  userId            String
+  apiCalls          ApiCall[]
+  user              User               @relation(fields: [userId], references: [id])
   subscriptionSites SubscriptionSite[]
 }
 
 model Subscription {
-  id            String    @id @default(cuid())
-  name          String
-  requestLimit  Int
-  price         Float
-  durationDays  Int
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Relations
-  userSubscriptions UserSubscription[]
+  id                String             @id @default(cuid())
+  name              String
+  requestLimit      Int
+  price             Float
+  durationDays      Int
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   subscriptionSites SubscriptionSite[]
+  userSubscriptions UserSubscription[]
 }
 
 model UserSubscription {
-  id                  String    @id @default(cuid())
-  userId              String
-  subscriptionId      String
-  startDate           DateTime  @default(now())
-  endDate             DateTime
-  isActive            Boolean   @default(true)
-  requestLimitAtPurchase Int    @default(0)
-  remainingRequest    Int
-  updatedAt           DateTime  @updatedAt
-
-  // Relations
-  user          User        @relation(fields: [userId], references: [id])
-  subscription  Subscription @relation(fields: [subscriptionId], references: [id])
-  apiCalls      ApiCall[]
+  id                     String       @id @default(cuid())
+  userId                 String
+  subscriptionId         String
+  startDate              DateTime     @default(now())
+  endDate                DateTime
+  isActive               Boolean      @default(true)
+  requestLimitAtPurchase Int          @default(0)
+  remainingRequest       Int
+  updatedAt              DateTime     @updatedAt
+  apiCalls               ApiCall[]
+  subscription           Subscription @relation(fields: [subscriptionId], references: [id])
+  user                   User         @relation(fields: [userId], references: [id])
 }
 
 model ApiCall {
-  id                  String    @id @default(cuid())
-  userId              String
-  userSubscriptionId  String
-  siteId              String
-  endpoint            String
-  timestamp           DateTime  @default(now())
-  responseStatus      Int
-  responseTimeMs      Int
-  createdAt           DateTime  @default(now())
-  filePath String?
-
-  // Relations
-  user          User            @relation(fields: [userId], references: [id])
-  userSubscription UserSubscription @relation(fields: [userSubscriptionId], references: [id])
-  site          Site            @relation(fields: [siteId], references: [id])
+  id                 String           @id @default(cuid())
+  userId             String
+  userSubscriptionId String
+  siteId             String
+  endpoint           String
+  timestamp          DateTime         @default(now())
+  responseStatus     Int
+  responseTimeMs     Int
+  createdAt          DateTime         @default(now())
+  filePath           String?
+  site               Site             @relation(fields: [siteId], references: [id])
+  user               User             @relation(fields: [userId], references: [id])
+  userSubscription   UserSubscription @relation(fields: [userSubscriptionId], references: [id])
 }
 
 model SubscriptionSite {
-  id              String    @id @default(cuid())
-  subscriptionId  String
-  siteId          String
-  createdAt       DateTime  @default(now())
-
-  // Relations
-  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
-  site            Site        @relation(fields: [siteId], references: [id])
+  id             String       @id @default(cuid())
+  subscriptionId String
+  siteId         String
+  createdAt      DateTime     @default(now())
+  site           Site         @relation(fields: [siteId], references: [id])
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
 }
 
 model ReferralTracking {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   referrerId  String
   referredId  String
   rewardCount Int
-  createdAt   DateTime  @default(now())
-
-  // Relations
-  referrer    User      @relation("Referrer", fields: [referrerId], references: [id])
-  referred    User      @relation("Referred", fields: [referredId], references: [id])
+  createdAt   DateTime @default(now())
+  referred    User     @relation("Referred", fields: [referredId], references: [id])
+  referrer    User     @relation("Referrer", fields: [referrerId], references: [id])
 }
 
-
+enum UserRole {
+  USER
+  ADMIN
+}
