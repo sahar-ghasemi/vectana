@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const [mobile, setMobile] = useState("");
@@ -159,27 +160,19 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile, otp }),
-        credentials: "include",
+      const res = await signIn("credentials", {
+        redirect: false,
+        mobile,
+        otp,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "خطا در ورود به سیستم");
+      if (!res?.ok) {
+        throw new Error(res?.error || "خطا در ورود به سیستم");
       }
 
-      if (data.success) {
-        console.log("Login successful, waiting for cookie to be set...");
-        // افزایش تاخیر برای اطمینان از ذخیره کوکی
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        console.log("Redirecting to dashboard...");
-        // استفاده از window.location.replace به جای href
-        window.location.replace("/dashboard");
-      }
+      // افزایش تاخیر برای اطمینان از ذخیره کوکی
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      window.location.replace("/dashboard");
     } catch (error) {
       setError(error instanceof Error ? error.message : "خطا در ورود به سیستم");
     } finally {

@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    console.log("Session:", session);
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,7 +15,6 @@ export async function GET() {
       where: { id: session.user.id },
       select: { referralCode: true },
     });
-    console.log("User:", user);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
