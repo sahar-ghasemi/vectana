@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
 import { toast, Toaster } from "react-hot-toast";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function LoginPage() {
   const [mobile, setMobile] = useState("");
@@ -11,6 +12,9 @@ export default function LoginPage() {
   const [canResend, setCanResend] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+  const setUser = useAuthStore((state) => state.setUser);
 
   // Load state from localStorage on component mount
   useEffect(() => {
@@ -173,11 +177,11 @@ export default function LoginPage() {
       }
 
       if (data.success) {
-        console.log("Login successful, waiting for cookie to be set...");
+        // ست کردن وضعیت لاگین در Zustand
+        setLoggedIn(true);
+        setUser({ id: data.userId || "", mobile });
         // افزایش تاخیر برای اطمینان از ذخیره کوکی
         await new Promise((resolve) => setTimeout(resolve, 3000));
-        console.log("Redirecting to dashboard...");
-        // استفاده از window.location.replace به جای href
         window.location.replace("/dashboard");
       }
     } catch (error) {
