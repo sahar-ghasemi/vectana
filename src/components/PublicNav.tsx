@@ -1,18 +1,37 @@
 "use client";
 import vectanaLogo from "../../public/images/vectana-logo.png";
 import Link from "next/link";
-import { useState } from "react";
-import { LoginButton, SignupButton } from "./";
+import { useState, useEffect } from "react";
+import { SignupButton } from "./";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { UserCircle } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 export default function PublicNav() {
   const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isAuthChecked = useAuthStore((state) => state.isAuthChecked);
+  const setLoggedIn = useAuthStore((state) => state.setLoggedIn);
+  const setAuthChecked = useAuthStore((state) => state.setAuthChecked);
+  const router = useRouter();
+
   const links = [
     { label: "صفحه اصلی", href: "/" },
     { label: "مقالات", href: "/blog" },
     { label: "تماس با ما", href: "/contact" },
     { label: "درباره ما", href: "/about" },
   ];
+
+  useEffect(() => {
+    fetch("/api/auth/verify", { credentials: "include" })
+      .then((res) => res.ok)
+      .then((isValid) => {
+        setLoggedIn(isValid);
+        setAuthChecked(true);
+      });
+  }, [setLoggedIn, setAuthChecked]);
+
   return (
     <>
       <nav className="bg-white border-gray-200 drop-shadow-xs">
@@ -31,8 +50,26 @@ export default function PublicNav() {
           </a>
           {/* ورود به سایت   */}
           <div className="flex items-center space-x-6 rtl:space-x-reverse">
-            <SignupButton />
-            <LoginButton />
+            {isAuthChecked &&
+              (isLoggedIn ? (
+                <button
+                  onClick={() => router.replace("/dashboard")}
+                  className="p-2 rounded-full hover:bg-gray-100 transition"
+                  title="ورود به داشبورد"
+                >
+                  <UserCircle size={32} className="text-purple-500" />
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => router.replace("/login")}
+                    className="bg-gradient-to-br from-purple-500 to-blue-500 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                  >
+                    ورود
+                  </button>
+                  <SignupButton />
+                </>
+              ))}
           </div>
         </div>
         <hr className=" h-0.5 border-t-0 bg-neutral-100" />
