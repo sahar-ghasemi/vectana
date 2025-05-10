@@ -12,6 +12,7 @@ import {
   faSignOutAlt,
   faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
+import { signOut } from "next-auth/react";
 
 export default function Sidebar() {
   const [activeLink, setActiveLink] = useState<string | null>(null);
@@ -26,7 +27,6 @@ export default function Sidebar() {
       icon: faShoppingCart,
     },
     { label: "ثبت واریز", href: "/dashboard/payinfo", icon: faCreditCard },
-    { label: "خروج", href: "/", icon: faSignOutAlt },
   ];
 
   const handleLinkClick = (label: string) => {
@@ -62,6 +62,16 @@ export default function Sidebar() {
           <span className="text-md">{label}</span>
         </Link>
       ))}
+
+      <button
+        onClick={() => signOut({ callbackUrl: "/" })}
+        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-300 text-gray-600
+          hover:bg-gradient-to-bl hover:from-purple-600 hover:to-blue-500 hover:text-white`}
+      >
+        <FontAwesomeIcon icon={faSignOutAlt} className="w-5 h-5" />
+        <span className="text-md">خروج</span>
+      </button>
+
       {/* Divider */}
       <div className="border-b border-gray-300 mb-2"></div>
       {/* Card Info */}
