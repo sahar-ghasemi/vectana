@@ -9,4 +9,3 @@ export { default as CurvedSection } from "./CurvedSection";
 export { default as SiteIntroSection } from "./SiteIntroSection";
 export { default as BlogCard } from "./BlogCard";
 export { default as ReferralLink } from "./ReferralLink";
-export { default as TestSession } from "./TestSession";

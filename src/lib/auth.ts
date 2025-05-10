@@ -3,6 +3,18 @@ import { AuthOptions } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { Redis } from "ioredis";
 
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      mobile: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
 const redis = new Redis({
   host: process.env.REDIS_HOST || "localhost",
   port: parseInt(process.env.REDIS_PORT || "6379"),
@@ -39,7 +51,6 @@ export const authOptions: AuthOptions = {
       if (user) {
         const u = user as { id: string; mobile: string };
         token.id = u.id;
-        token.mobile = u.mobile;
       }
       return token;
     },
@@ -47,7 +58,6 @@ export const authOptions: AuthOptions = {
       if (token && session.user) {
         const user = session.user as { id?: string; mobile?: string };
         user.id = token.id as string;
-        user.mobile = token.mobile as string;
       }
       return session;
     },
