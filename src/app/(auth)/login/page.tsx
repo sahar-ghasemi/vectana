@@ -77,7 +77,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const checkResponse = await fetch("/api/auth/check-mobile", {
+      const checkResponse = await fetch("/api/auth/login/check-mobile", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

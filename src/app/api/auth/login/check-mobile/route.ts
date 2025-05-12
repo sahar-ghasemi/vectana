@@ -16,9 +16,8 @@ export async function POST(request: Request) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error checking mobile:", error);
-    return NextResponse.json(
-      { error: "خطا در بررسی شماره موبایل" },
-      { status: 500 }
-    );
+    const errorMessage =
+      error instanceof Error ? error.message : "خطا در بررسی شماره موبایل";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
