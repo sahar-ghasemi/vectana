@@ -1,32 +1,74 @@
+import { validateEmail, validateMobile } from "@/lib/utils";
+
+export function generateReferralCode(): string {
+  const prefix = "vectana123";
+  const randomNum = Math.floor(Math.random() * 1000000)
+    .toString()
+    .padStart(6, "0");
+  return `${prefix}${randomNum}`;
+}
+
 interface RegisterUserData {
+  name: string;
+  lastName?: string;
   mobile: string;
-  name?: string;
-  email?: string;
+  email: string;
+  referralCode?: string;
+}
+
+interface UserResponse {
+  id: string;
+  name: string;
+  email: string;
+  mobile: string;
+  referralCode: string;
+  remainingFreeRequest: number;
 }
 
 export const userService = {
+  async register(userData: RegisterUserData): Promise<UserResponse> {
+    try {
+      // Validate data
+      if (!validateMobile(userData.mobile)) {
+        throw new Error("فرمت شماره موبایل نامعتبر است");
+      }
+      if (!validateEmail(userData.email)) {
+        throw new Error("فرمت ایمیل نامعتبر است");
+      }
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "خطا در ثبت نام");
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    }
+  },
+
   async getReferralLink(): Promise<string> {
     try {
-      const response = await fetch("/api/user/referral");
-      if (!response.ok) {
-        throw new Error("Failed to fetch referral link");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      if (!user.referralCode) {
+        throw new Error("کد معرف یافت نشد");
       }
-      const data = await response.json();
-
-      if (!data.referralCode) {
-        throw new Error("No referral code found");
-      }
-
-      // ساخت لینک کامل با دامنه سایت
-      const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-      return `${baseUrl}/register?ref=${data.referralCode}`;
+      return `${window.location.origin}/signup?ref=${user.referralCode}`;
     } catch (error) {
       console.error("Error getting referral link:", error);
       throw error;
     }
   },
 
-  // برای زمانی که کاربر با لینک معرفی ثبت نام می‌کنه
   async registerWithReferral(referralCode: string, userData: RegisterUserData) {
     try {
       const response = await fetch("/api/auth/register", {
@@ -41,7 +83,8 @@ export const userService = {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to register with referral");
+        const error = await response.json();
+        throw new Error(error.error || "خطا در ثبت نام");
       }
 
       return await response.json();
