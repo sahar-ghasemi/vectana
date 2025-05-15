@@ -64,7 +64,12 @@ export default function Sidebar() {
       ))}
 
       <button
-        onClick={() => signOut({ callbackUrl: "/" })}
+        onClick={() => {
+          localStorage.removeItem("loginMobile");
+          localStorage.removeItem("otpSent");
+          localStorage.removeItem("otpExpiryTime");
+          signOut({ callbackUrl: "/" });
+        }}
         className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors duration-300 text-gray-600
           hover:bg-gradient-to-bl hover:from-purple-600 hover:to-blue-500 hover:text-white`}
       >
