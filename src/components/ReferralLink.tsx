@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import { userService } from "@/services/user";
 import { Copy, Check } from "lucide-react";
 
 const ReferralLink = () => {
@@ -11,9 +10,14 @@ const ReferralLink = () => {
   useEffect(() => {
     const fetchReferralLink = async () => {
       try {
-        const link = await userService.getReferralLink();
-        setReferralLink(link);
+        const res = await fetch("/api/user/referral");
+        const data = await res.json();
+        if (!data.referralCode) throw new Error("کد معرف یافت نشد");
+        setReferralLink(
+          `${window.location.origin}/signup?ref=${data.referralCode}`
+        );
       } catch (error) {
+        setReferralLink("");
         console.error("Failed to load referral link:", error);
       } finally {
         setIsLoading(false);
@@ -56,7 +60,7 @@ const ReferralLink = () => {
             dir="ltr"
             className="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white/50 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-300 text-left"
             onClick={(e) => e.currentTarget.select()}
-          />{" "}
+          />
           <button
             onClick={handleCopy}
             className={`p-2 rounded-lg transition-all duration-200 ${
