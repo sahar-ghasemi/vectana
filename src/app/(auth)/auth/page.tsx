@@ -2,21 +2,22 @@
 import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast, Toaster } from "react-hot-toast";
+import { signIn } from "next-auth/react";
 
-export default function SignupPage() {
+export default function AuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const mode = searchParams.get("mode") || "login"; // "login" or "register"
   const referralCode = searchParams.get("ref") || "";
 
   // Step management
-  const [step, setStep] = useState(1); // 1: mobile, 2: otp, 3: info
+  const [step, setStep] = useState(1); // 1: mobile, 2: otp, 3: info (for register only)
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [otpCountdown, setOtpCountdown] = useState(0);
   const [canResend, setCanResend] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
 
   // Registration info
   const [name, setName] = useState("");
@@ -50,22 +51,73 @@ export default function SignupPage() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+
     try {
-      const res = await fetch("/api/auth/send-otp", {
+      // Check if mobile exists
+      const checkResponse = await fetch("/api/auth/login/check-mobile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile }),
       });
+
+      const checkData = await checkResponse.json();
+
+      if (!checkResponse.ok) {
+        throw new Error(checkData.error || "خطا در بررسی شماره موبایل");
+      }
+
+      // For login mode
+      if (mode === "login") {
+        if (!checkData.exists) {
+          toast.error(
+            "این شماره موبایل ثبت نشده است. لطفا ابتدا ثبت‌نام کنید.",
+            {
+              duration: 5000,
+              position: "top-center",
+              style: {
+                background: "#FEE2E2",
+                color: "#991B1B",
+                padding: "16px",
+                borderRadius: "8px",
+              },
+            }
+          );
+          return;
+        }
+      }
+      // For register mode
+      else {
+        if (checkData.exists) {
+          toast.error("این شماره موبایل قبلاً ثبت شده است. لطفا وارد شوید.", {
+            duration: 5000,
+            position: "top-center",
+            style: {
+              background: "#FEE2E2",
+              color: "#991B1B",
+              padding: "16px",
+              borderRadius: "8px",
+            },
+          });
+          return;
+        }
+      }
+
+      // Send OTP
+      const res = await fetch("/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile, mode }),
+      });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "خطا در ارسال کد تایید");
+
       setStep(2);
       setOtpCountdown(120);
       setCanResend(false);
       toast.success("کد تایید ارسال شد");
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
-      setError(error.message);
       toast.error(error.message);
     } finally {
       setIsLoading(false);
@@ -76,21 +128,42 @@ export default function SignupPage() {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+
     try {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile, otp }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "خطا در تایید کد");
+
       setIsOtpVerified(true);
-      setStep(3);
-      toast.success("کد تایید شد. لطفاً اطلاعات خود را وارد کنید.");
+
+      if (mode === "login") {
+        // For login, proceed with authentication
+        const signInRes = await signIn("credentials", {
+          redirect: false,
+          mobile,
+          otp,
+          callbackUrl: "/dashboard",
+        });
+
+        if (!signInRes?.ok) {
+          throw new Error(signInRes?.error || "خطا در ورود به سیستم");
+        }
+
+        // Add delay to ensure cookie is saved
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        router.replace("/dashboard");
+      } else {
+        // For register, move to info step
+        setStep(3);
+        toast.success("کد تایید شد. لطفاً اطلاعات خود را وارد کنید.");
+      }
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
-      setError(error.message);
       toast.error(error.message);
     } finally {
       setIsLoading(false);
@@ -101,21 +174,22 @@ export default function SignupPage() {
   const handleResendOtp = async () => {
     if (!canResend) return;
     setIsLoading(true);
-    setError("");
+
     try {
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mobile }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "خطا در ارسال مجدد کد");
+
       setOtpCountdown(120);
       setCanResend(false);
       toast.success("کد تایید مجدداً ارسال شد");
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
-      setError(error.message);
       toast.error(error.message);
     } finally {
       setIsLoading(false);
@@ -126,7 +200,7 @@ export default function SignupPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
+
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
@@ -139,13 +213,32 @@ export default function SignupPage() {
           referralCode: referralCode || undefined,
         }),
       });
+
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "خطا در ثبت نام");
-      toast.success("ثبت‌نام با موفقیت انجام شد");
-      router.replace("/dashboard");
+
+      // After successful registration, sign in the user
+      const signInRes = await signIn("credentials", {
+        redirect: false,
+        mobile,
+        otp,
+        callbackUrl: "/dashboard",
+      });
+
+      if (!signInRes?.ok) {
+        // If sign in fails, we'll still show success message and redirect
+        // since registration was successful
+        toast.success("ثبت‌نام با موفقیت انجام شد");
+        // Add a small delay before redirect
+        setTimeout(() => {
+          router.replace("/dashboard");
+        }, 1000);
+      } else {
+        toast.success("ثبت‌نام با موفقیت انجام شد");
+        router.replace("/dashboard");
+      }
     } catch (err: unknown) {
       const error = err instanceof Error ? err : new Error(String(err));
-      setError(error.message);
       toast.error(error.message);
     } finally {
       setIsLoading(false);
@@ -157,8 +250,9 @@ export default function SignupPage() {
       <Toaster position="top-center" />
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">
-          ثبت‌نام در وکتانا
+          {mode === "login" ? "ورود به حساب کاربری" : "ثبت‌نام در وکتانا"}
         </h2>
+
         {step === 1 && (
           <form onSubmit={handleSendOtp} className="space-y-5">
             <div>
@@ -189,6 +283,7 @@ export default function SignupPage() {
             </button>
           </form>
         )}
+
         {step === 2 && (
           <form onSubmit={handleVerifyOtp} className="space-y-5">
             <div>
@@ -235,7 +330,8 @@ export default function SignupPage() {
             </button>
           </form>
         )}
-        {step === 3 && isOtpVerified && (
+
+        {step === 3 && isOtpVerified && mode === "register" && (
           <form onSubmit={handleRegister} className="space-y-5">
             <div>
               <label
@@ -248,8 +344,8 @@ export default function SignupPage() {
                 type="text"
                 id="name"
                 value={name}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="نام"
+                className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="نام خود را وارد کنید"
                 required
                 onChange={(e) => setName(e.target.value)}
                 disabled={isLoading}
@@ -260,14 +356,15 @@ export default function SignupPage() {
                 htmlFor="lastName"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                نام خانوادگی (اختیاری):
+                نام خانوادگی:
               </label>
               <input
                 type="text"
                 id="lastName"
                 value={lastName}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="نام خانوادگی"
+                className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="نام خانوادگی خود را وارد کنید"
+                required
                 onChange={(e) => setLastName(e.target.value)}
                 disabled={isLoading}
               />
@@ -283,19 +380,13 @@ export default function SignupPage() {
                 type="email"
                 id="email"
                 value={email}
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                placeholder="ایمیل"
+                className="text-left w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                placeholder="example@email.com"
                 required
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
               />
             </div>
-            {referralCode && (
-              <div className="text-sm text-gray-600 mb-2">
-                ثبت‌نام با کد معرف:{" "}
-                <span className="font-bold">{referralCode}</span>
-              </div>
-            )}
             <button
               type="submit"
               disabled={isLoading}
@@ -304,9 +395,6 @@ export default function SignupPage() {
               {isLoading ? "در حال ثبت‌نام..." : "ثبت‌نام"}
             </button>
           </form>
-        )}
-        {error && (
-          <div className="text-red-600 text-center mt-4 text-sm">{error}</div>
         )}
       </div>
     </div>

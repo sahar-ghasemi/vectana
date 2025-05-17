@@ -1,7 +1,7 @@
 export { default as Header } from "./Header";
 export { default as Footer } from "./Footer";
 export { default as PublicNav } from "./PublicNav";
-export { default as LoginButton } from "./LoginButton";
+export { default as LoginButton } from "./common/LoginButton";
 export { default as SignupButton } from "./SignupButton";
 export { default as LearningSection } from "./LearningSection";
 export { default as HighlightTextSection } from "./HighlightTextSection";
@@ -9,3 +9,4 @@ export { default as CurvedSection } from "./CurvedSection";
 export { default as SiteIntroSection } from "./SiteIntroSection";
 export { default as BlogCard } from "./BlogCard";
 export { default as ReferralLink } from "./ReferralLink";
+export { default as LogoutButton } from "./common/LogoutButton";

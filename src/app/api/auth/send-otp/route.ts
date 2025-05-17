@@ -15,7 +15,7 @@ const redis = new Redis({
 
 export async function POST(req: Request) {
   try {
-    const { mobile } = await req.json();
+    const { mobile, mode } = await req.json();
 
     // Validate mobile format
     if (!/^09[0-9]{9}$/.test(mobile)) {
@@ -30,9 +30,18 @@ export async function POST(req: Request) {
       where: { mobile },
     });
 
-    if (existingUser) {
+    // For register mode, check if mobile exists
+    if (mode === "register" && existingUser) {
       return NextResponse.json(
         { error: "این شماره موبایل قبلاً ثبت شده است" },
+        { status: 400 }
+      );
+    }
+
+    // For login mode, check if mobile doesn't exist
+    if (mode === "login" && !existingUser) {
+      return NextResponse.json(
+        { error: "این شماره موبایل ثبت نشده است" },
         { status: 400 }
       );
     }

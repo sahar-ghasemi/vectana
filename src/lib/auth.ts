@@ -1,7 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthOptions } from "next-auth";
 import { prisma } from "@/lib/prisma";
-import { Redis } from "ioredis";
 
 declare module "next-auth" {
   interface Session {
@@ -15,12 +14,6 @@ declare module "next-auth" {
   }
 }
 
-const redis = new Redis({
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
-  password: process.env.REDIS_PASSWORD,
-});
-
 export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
@@ -30,34 +23,63 @@ export const authOptions: AuthOptions = {
         otp: { label: "OTP", type: "text" },
       },
       async authorize(credentials) {
-        const { mobile, otp } = credentials ?? {};
-        if (!mobile || !otp) return null;
+        if (!credentials?.mobile || !credentials?.otp) {
+          throw new Error("شماره موبایل و کد تایید الزامی است");
+        }
 
-        const storedOTP = await redis.get(`otp:${mobile}`);
-        if (!storedOTP) return null;
-        if (otp !== storedOTP) return null;
+        try {
+          // Get user from database
+          const user = await prisma.user.findUnique({
+            where: { mobile: credentials.mobile },
+          });
 
-        const user = await prisma.user.findUnique({ where: { mobile } });
-        if (!user) return null;
+          if (!user) {
+            throw new Error("کاربری با این شماره موبایل یافت نشد");
+          }
 
-        await redis.del(`otp:${mobile}`);
-        return user;
+          // Verify OTP using the API
+          const verifyResponse = await fetch(
+            `${process.env.NEXTAUTH_URL}/api/auth/verify-otp`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                mobile: credentials.mobile,
+                otp: credentials.otp,
+              }),
+            }
+          );
+
+          if (!verifyResponse.ok) {
+            throw new Error("کد تایید نامعتبر است");
+          }
+
+          return {
+            id: user.id,
+            mobile: user.mobile,
+            email: user.email,
+          };
+        } catch (error) {
+          console.error("Error in authorize:", error);
+          throw error;
+        }
       },
     }),
   ],
+  pages: {
+    signIn: "/auth",
+  },
   session: { strategy: "jwt" },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        const u = user as { id: string; mobile: string };
-        token.id = u.id;
+        token.id = user.id;
       }
       return token;
     },
     async session({ session, token }) {
-      if (token && session.user) {
-        const user = session.user as { id?: string; mobile?: string };
-        user.id = token.id as string;
+      if (token) {
+        session.user.id = token.id as string;
       }
       return session;
     },
