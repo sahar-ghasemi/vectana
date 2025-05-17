@@ -14,7 +14,7 @@ const ReferralLink = () => {
         const data = await res.json();
         if (!data.referralCode) throw new Error("کد معرف یافت نشد");
         setReferralLink(
-          `${window.location.origin}/signup?ref=${data.referralCode}`
+          `${window.location.origin}/auth?mode=register&ref=${data.referralCode}`
         );
       } catch (error) {
         setReferralLink("");
